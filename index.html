@@ -4,9 +4,59 @@
 	<meta charset="utf-8" />
 	<title>Colorpicker demo</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
+	<style>
+		.light{
+			background-color: black;
+			width: 11px;
+			height: 11px;
+			float: left;
+			margin-right: 5px;
+			border-radius: 5px;
+			border: 1px solid #fff;
+			z-index: 2;
+			position: relative;
+		}
+
+		.light-sim, select, #hex, #rgb, .color{
+			margin-top: 20px;
+		}
+
+		.light-sim{
+			padding: 25px;
+			background-color: #000;
+			display: inline-block;
+			position: relative;
+		}
+
+		.light-sim-inner:after{
+			display: block;
+			clear: both;
+			content: ''
+		}
+
+		.light-string{
+			position: absolute;
+			height: 1px;
+			width: 100%;
+			left: 0px;
+			top: 50%;
+			background-color: #fff;
+			z-index: 1;
+		}
+
+		.light-sim-inner{
+			position: relative;
+			display: block;
+		}
+
+		.light-sim-inner .light:last-child{
+			margin-right: 0px;
+		}
+	</style>
 </head>
 <body>
-    <canvas width="480" height="480" id="canvas_picker"></canvas>
+    <canvas width="200" height="200" id="canvas_picker"></canvas>
     <div id="hex">HEX: <input type="text"></input></div>
     <div id="rgb">RGB: <input type="text"></input></div>
     <select id="lednum">
@@ -18,10 +68,37 @@
 	<div class="color" style="width: 50px; height: 50px; background-color: #000;"></div>
 
 
+	<div class="light-sim">
+		<div class="light-sim-inner">
+			<div class="light-string"></div>
+		</div>
+	</div>
+
+	<script src="animations.js"></script>
     <script type="text/javascript">
+		var fps = 10;
+		var strip = {};
+		strip.pixel = function(n){
+			return {
+				color: function(c){
+					if( Array.isArray(c) ){
+						c = "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")";
+					}
+					$('#light' + n).css('background-color', c);
+				}
+			}
+		}
+
+		strip.length = 50;
+
+		strip.show = function(){
+			return;
+		}
+
         $(document).ready(function(){
             for( var i = 0; i < 50; i++ ){
                 $('#lednum').append('<option value="' + i + '">' + i + '</option>')
+				$('.light-sim-inner').append('<div id="light' + i + '" class="light"></div>');
             }
         });
 
@@ -33,7 +110,7 @@
 
     	// copy the image to the canvas
     	$(img).load(function(){
-            canvas.drawImage(img,0,0);
+            canvas.drawImage(img,0,0, 200, 200);
     	});
 
     	// http://www.javascripter.net/faq/rgbtohex.htm
@@ -89,5 +166,7 @@
 
     	});
     </script>
+
+
 </body>
 </html>

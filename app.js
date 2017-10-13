@@ -5,31 +5,44 @@ var five = require("johnny-five");
 var express = require("express");
 var app = express();
 var port = 4099;
+var testing = false;
 
-var board = new five.Board();
-var strip = null;
+process.argv.forEach(function (val, index, array) {
+    if( val === "--testing" ) testing = true;
+});
+
+if( !testing ){
+    var board = new five.Board();
+    var strip = null;
+}
+
 
 var animation = null;
 var fps = 10;
 
-board.on("ready", function() {
 
-    strip = new pixel.Strip({
-        board: this,
-        controller: "FIRMATA",
-        strips: [ {pin: 6, length: 50, color_order: 1}, ], // this is preferred form for definition
-        gamma: 2.8
+
+if( !testing ){
+    board.on("ready", function() {
+
+        strip = new pixel.Strip({
+            board: this,
+            controller: "FIRMATA",
+            strips: [ {pin: 6, length: 50, color_order: 1}, ], // this is preferred form for definition
+            gamma: 2.8
+        });
+
+        strip.on("ready", function() {
+            console.log("Strip ready, let's go");
+            // icicle();
+            strip.off();
+            // raindropFade();
+            icicle();
+        });
+
     });
+}
 
-    strip.on("ready", function() {
-        console.log("Strip ready, let's go");
-        // icicle();
-        strip.off();
-        // raindropFade();
-        icicle();
-    });
-
-});
 
 app.use('/', express.static(__dirname));
 
